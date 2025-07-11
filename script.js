@@ -1,40 +1,27 @@
 class FactsGenerator {
     constructor() {
-        this.factsCount = 0;
-        this.sessionStartTime = Date.now();
         this.currentFact = '';
         this.isLoading = false;
         
         this.initializeElements();
         this.bindEvents();
-        this.startSessionTimer();
         this.showWelcomeMessage();
     }
 
     initializeElements() {
         this.factText = document.getElementById('fact-text');
-        this.factCategory = document.getElementById('fact-category');
         this.generateBtn = document.getElementById('generate-btn');
-        this.shareBtn = document.getElementById('share-btn');
-        this.factsCountEl = document.getElementById('facts-count');
-        this.sessionTimeEl = document.getElementById('session-time');
         this.loadingOverlay = document.getElementById('loading-overlay');
-        this.toast = document.getElementById('toast');
-        this.toastMessage = document.getElementById('toast-message');
     }
 
     bindEvents() {
         this.generateBtn.addEventListener('click', () => this.generateFact());
-        this.shareBtn.addEventListener('click', () => this.shareFact());
         
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if (e.code === 'Space' && !this.isLoading) {
                 e.preventDefault();
                 this.generateFact();
-            }
-            if (e.ctrlKey && e.key === 'c' && this.currentFact) {
-                this.copyToClipboard();
             }
         });
     }
@@ -49,9 +36,6 @@ class FactsGenerator {
         try {
             const fact = await this.fetchRandomFact();
             this.displayFact(fact);
-            this.factsCount++;
-            this.updateStats();
-            this.shareBtn.disabled = false;
         } catch (error) {
             console.error('Error fetching fact:', error);
             this.showError();
@@ -63,44 +47,51 @@ class FactsGenerator {
     }
 
     async fetchRandomFact() {
-        // Using API Ninjas Facts API - free and no authentication required
-        const response = await fetch('https://api.api-ninjas.com/v1/facts?limit=1', {
-            headers: {
-                'X-Api-Key': 'YOUR_API_KEY' // For demo purposes, using a fallback
-            }
-        });
+        // Using Numbers API for math facts
+        const randomNumber = Math.floor(Math.random() * 1000) + 1;
+        const response = await fetch(`http://numbersapi.com/${randomNumber}/math`);
         
         if (!response.ok) {
-            // Fallback to a different API if the first one fails
-            return await this.fetchFromFallbackAPI();
+            // Fallback to predefined math facts if API fails
+            return {
+                text: this.getFallbackMathFact(),
+                category: 'Math'
+            };
         }
         
-        const data = await response.json();
+        const factText = await response.text();
         return {
-            text: data[0].fact,
-            category: 'General'
+            text: factText,
+            category: 'Math'
         };
     }
 
-    async fetchFromFallbackAPI() {
-        // Fallback to uselessfacts.jsph.pl API
-        const response = await fetch('https://uselessfacts.jsph.pl/random.json?language=en');
+    getFallbackMathFact() {
+        const mathFacts = [
+            "The number zero was invented in India around the 5th century.",
+            "Pi has been calculated to over 31 trillion digits.",
+            "The Fibonacci sequence appears throughout nature, from flower petals to spiral galaxies.",
+            "A googol is 1 followed by 100 zeros, but a googolplex is 1 followed by a googol zeros.",
+            "The Golden Ratio (φ ≈ 1.618) is considered the most beautiful number in mathematics.",
+            "There are infinitely many prime numbers, as proven by Euclid around 300 BCE.",
+            "The sum of all positive integers (-1 + -2 + -3 + ...) mathematically equals -1/12.",
+            "A circle has exactly 360 degrees, a tradition that dates back to ancient Babylon.",
+            "The probability of shuffling a deck of cards into any specific order is 1 in 52! (about 8×10^67).",
+            "Mathematics is the only language shared by all human beings across the globe.",
+            "The word 'algebra' comes from the Arabic word 'al-jabr' meaning 'reunion of broken parts'.",
+            "Zero is the only number that cannot be represented in Roman numerals.",
+            "Every odd number greater than 1 is the sum of at most 3 prime numbers.",
+            "The number 1729 is known as the Hardy-Ramanujan number - the smallest number expressible as the sum of two cubes in two different ways.",
+            "A Klein bottle is a surface with no boundary and only one side.",
+            "The Monty Hall problem demonstrates how our intuition about probability can be wrong."
+        ];
         
-        if (!response.ok) {
-            throw new Error('Failed to fetch from fallback API');
-        }
-        
-        const data = await response.json();
-        return {
-            text: data.text,
-            category: 'Random'
-        };
+        return mathFacts[Math.floor(Math.random() * mathFacts.length)];
     }
 
     displayFact(fact) {
         this.currentFact = fact.text;
         this.factText.textContent = fact.text;
-        this.factCategory.textContent = fact.category;
         
         // Add animation
         this.factText.style.opacity = '0';
@@ -114,26 +105,7 @@ class FactsGenerator {
     }
 
     showError() {
-        this.factText.textContent = 'Oops! Something went wrong while fetching the fact. Please try again.';
-        this.factCategory.textContent = 'Error';
-        this.factCategory.style.background = '#e53e3e';
-        
-        setTimeout(() => {
-            this.factCategory.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
-        }, 3000);
-    }
-
-    updateStats() {
-        this.factsCountEl.textContent = this.factsCount;
-    }
-
-    startSessionTimer() {
-        setInterval(() => {
-            const elapsed = Math.floor((Date.now() - this.sessionStartTime) / 1000);
-            const minutes = Math.floor(elapsed / 60);
-            const seconds = elapsed % 60;
-            this.sessionTimeEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-        }, 1000);
+        this.factText.textContent = 'Oops! Something went wrong while fetching the math fact. Please try again.';
     }
 
     showLoading() {
@@ -149,72 +121,29 @@ class FactsGenerator {
         const btnIcon = this.generateBtn.querySelector('i');
         
         if (loading) {
-            btnText.textContent = 'Generating...';
+            btnText.textContent = 'Loading...';
             btnIcon.className = 'fas fa-spinner fa-spin';
             this.generateBtn.disabled = true;
         } else {
-            btnText.textContent = 'Generate New Fact';
-            btnIcon.className = 'fas fa-magic';
+            btnText.textContent = 'Get New Math Fact';
+            btnIcon.className = 'fas fa-refresh';
             this.generateBtn.disabled = false;
         }
     }
 
-    async shareFact() {
-        if (!this.currentFact) return;
-        
-        if (navigator.share) {
-            try {
-                await navigator.share({
-                    title: 'Amazing Fact!',
-                    text: this.currentFact,
-                    url: window.location.href
-                });
-                this.showToast('Fact shared successfully!');
-            } catch (error) {
-                if (error.name !== 'AbortError') {
-                    this.copyToClipboard();
-                }
-            }
-        } else {
-            this.copyToClipboard();
-        }
-    }
-
-    async copyToClipboard() {
-        try {
-            await navigator.clipboard.writeText(this.currentFact);
-            this.showToast('Fact copied to clipboard!');
-        } catch (error) {
-            console.error('Failed to copy to clipboard:', error);
-            this.showToast('Failed to copy fact', 'error');
-        }
-    }
-
-    showToast(message, type = 'success') {
-        this.toastMessage.textContent = message;
-        this.toast.className = `toast ${type}`;
-        this.toast.classList.add('show');
-        
-        setTimeout(() => {
-            this.toast.classList.remove('show');
-        }, 3000);
-    }
-
     showWelcomeMessage() {
-        const welcomeFacts = [
-            "Welcome to Facts Generator! Did you know that honey never spoils?",
-            "Ready to explore? A group of flamingos is called a 'flamboyance'!",
-            "Let's start learning! Bananas are berries, but strawberries aren't!",
-            "Welcome aboard! Octopuses have three hearts and blue blood!",
-            "Time to discover! A day on Venus is longer than its year!"
+        const welcomeMathFacts = [
+            "Welcome to Math Facts Generator! Did you know that π (pi) is an irrational number?",
+            "Ready to explore? Zero is the only number that is neither positive nor negative!",
+            "Let's start learning! The sum of the first n positive integers is n(n+1)/2!",
+            "Welcome aboard! The probability of getting heads on a fair coin flip is exactly 1/2!",
+            "Time to discover! A prime number is only divisible by 1 and itself!"
         ];
         
-        const randomWelcome = welcomeFacts[Math.floor(Math.random() * welcomeFacts.length)];
+        const randomWelcome = welcomeMathFacts[Math.floor(Math.random() * welcomeMathFacts.length)];
         setTimeout(() => {
             this.factText.textContent = randomWelcome;
-            this.factCategory.textContent = 'Welcome';
             this.currentFact = randomWelcome;
-            this.shareBtn.disabled = false;
         }, 1000);
     }
 }
@@ -223,34 +152,3 @@ class FactsGenerator {
 document.addEventListener('DOMContentLoaded', () => {
     new FactsGenerator();
 });
-
-// Add some fun easter eggs
-document.addEventListener('keydown', (e) => {
-    // Konami code easter egg
-    const konamiCode = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
-    static konamiIndex = 0;
-    
-    if (e.keyCode === konamiCode[konamiIndex]) {
-        konamiIndex++;
-        if (konamiIndex === konamiCode.length) {
-            // Easter egg activated!
-            document.body.style.animation = 'rainbow 2s infinite';
-            setTimeout(() => {
-                document.body.style.animation = '';
-            }, 10000);
-            konamiIndex = 0;
-        }
-    } else {
-        konamiIndex = 0;
-    }
-});
-
-// Add rainbow animation for easter egg
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes rainbow {
-        0% { filter: hue-rotate(0deg); }
-        100% { filter: hue-rotate(360deg); }
-    }
-`;
-document.head.appendChild(style);

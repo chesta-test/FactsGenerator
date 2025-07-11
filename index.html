@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Facts Generator - Discover Amazing Facts</title>
+    <title>Math Facts Generator - Discover Amazing Math Facts</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -13,64 +13,38 @@
         <header class="header">
             <div class="logo">
                 <i class="fas fa-lightbulb"></i>
-                <h1>Facts Generator</h1>
+                <h1>Math Facts Generator</h1>
             </div>
-            <p class="subtitle">Discover amazing facts from around the world</p>
+            <p class="subtitle">Discover amazing mathematical facts and curiosities</p>
         </header>
 
         <main class="main-content">
             <div class="fact-container">
                 <div class="fact-card">
-                    <div class="fact-icon">
-                        <i class="fas fa-quote-left"></i>
-                    </div>
                     <div class="fact-content">
-                        <p id="fact-text">Click the button below to discover an amazing fact!</p>
-                    </div>
-                    <div class="fact-footer">
-                        <span class="fact-category" id="fact-category">Ready to learn?</span>
+                        <p id="fact-text">Click the button below to discover an amazing math fact!</p>
                     </div>
                 </div>
             </div>
 
             <div class="controls">
                 <button id="generate-btn" class="generate-btn">
-                    <i class="fas fa-magic"></i>
-                    <span>Generate New Fact</span>
+                    <i class="fas fa-refresh"></i>
+                    <span>Get New Math Fact</span>
                 </button>
-                <button id="share-btn" class="share-btn" disabled>
-                    <i class="fas fa-share-alt"></i>
-                    <span>Share Fact</span>
-                </button>
-            </div>
-
-            <div class="stats">
-                <div class="stat-item">
-                    <span class="stat-number" id="facts-count">0</span>
-                    <span class="stat-label">Facts Discovered</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number" id="session-time">0:00</span>
-                    <span class="stat-label">Session Time</span>
-                </div>
             </div>
         </main>
 
         <footer class="footer">
-            <p>Powered by <a href="https://api.api-ninjas.com/" target="_blank">API Ninjas</a></p>
+            <p>Powered by <a href="http://numbersapi.com/" target="_blank">Numbers API</a></p>
         </footer>
     </div>
 
     <div class="loading-overlay" id="loading-overlay">
         <div class="loading-spinner">
             <i class="fas fa-spinner fa-spin"></i>
-            <p>Fetching amazing facts...</p>
+            <p>Loading math fact...</p>
         </div>
-    </div>
-
-    <div class="toast" id="toast">
-        <i class="fas fa-check-circle"></i>
-        <span id="toast-message">Fact copied to clipboard!</span>
     </div>
 
     <script src="script.js"></script>
